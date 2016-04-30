@@ -12,6 +12,6 @@ public interface ArduinoService {
     // 서버의 RootUrl
     String BASE_URL = "http://192.168.0.29/";
 
-    @GET()
+    @GET("/")
     Call<SensorResult> getSensorResult();
 }

@@ -10,7 +10,7 @@ import retrofit2.http.GET;
  */
 public interface ArduinoService {
     // 서버의 RootUrl
-    String BASE_URL = "http://192.168.0.29/";
+    String BASE_URL = "http://192.168.0.29";
 
     @GET("/")
     Call<SensorResult> getSensorResult();

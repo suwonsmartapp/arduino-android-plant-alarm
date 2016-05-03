@@ -1,8 +1,9 @@
 package com.sjyr.plantalarm;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.sjyr.plantalarm.interfaces.ArduinoService;
 import com.sjyr.plantalarm.models.SensorResult;
@@ -15,10 +16,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
+    private TextView mResult;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mResult = (TextView) findViewById(R.id.result_textview);
 
         // 수분값 얻어오기
         Retrofit retrofit = new Retrofit.Builder()
@@ -26,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        ArduinoService arduinoService = retrofit.create(ArduinoService.class);
+        final ArduinoService arduinoService = retrofit.create(ArduinoService.class);
 
         arduinoService.getSensorResult().enqueue(new Callback<SensorResult>() {
             @Override
@@ -36,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
                     // 성공
                     SensorResult body = response.body();
                     Log.d("MainActivity", "onResponse: " + body.getMoisture());
-
+                    mResult.setText("" + body.getMoisture());
                 } else {
                     // 실패
                     Log.d("MainActivity", "onResponse: 실패");
@@ -48,9 +53,9 @@ public class MainActivity extends AppCompatActivity {
             public void onFailure(Call<SensorResult> call, Throwable t) {
                 // 404 서버 죽었을 때 실패
                 Log.d("MainActivity", "onFailure: 404 서버 다운" + t.getLocalizedMessage());
+
             }
         });
-
         // 뿌려주기
     }
 }

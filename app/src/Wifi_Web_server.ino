@@ -1,13 +1,9 @@
-#include <Twitter.h>
-
 #include <Debug.h>
 #include <WiFly.h>
 #include <WiFlyClient.h>
 
 #include <SoftwareSerial.h>
 #include "WiFly.h"
-#include <Twitter.h>
-#include <SPI.h>
 
 #define SSID      "test"
 #define KEY       "123456789a"
@@ -23,8 +19,6 @@ int flag = 0;
 
 SoftwareSerial wiflyUart(2, 3); // create a WiFi shield serial object
 WiFly wifly(&wiflyUart); // pass the wifi siheld serial object to the WiFly class
-
-Twitter twitter("723698180362129409-Rmyc8W2SaZLaqsHmKBv3ZwIiOBQ4x7R");
 
 int MoisturePin = A0;    // A0에 입력 MoisturePin을 연결
 int sensorValue = 0;  // 센서로부터 나오는 값을 변수에 저장
@@ -67,20 +61,6 @@ void setup()
   }
 
   Serial.println("Web server ready");
-
-  //  Serial.println("Twitter ...");
-  //  char msg[] = "Hello, World! I'm Arduino!";
-  //  if (twitter.post(msg)) {
-  //    int status = twitter.wait();
-  //    if (status == 200) {
-  //      Serial.println("OK.");
-  //    } else {
-  //      Serial.print("failed : code ");
-  //      Serial.println(status);
-  //    }
-  //  } else {
-  //    Serial.println("connection failed.");
-  //  }
 }
 
 void loop()
@@ -107,16 +87,9 @@ void loop()
         wiflyUart.println();
 
         // send webpage's HTML code
-        //        wiflyUart.print("<html>");
-        //        wiflyUart.print("<head>");
-        //        wiflyUart.print("<title>수분값 모니터링</title>");
-        //        wiflyUart.print("</head>");
-        //        wiflyUart.print("<body>");
         wiflyUart.print("{ \"moisture\": ");
         wiflyUart.print(analogRead(MoisturePin));
         wiflyUart.print(" }");
-        //        wiflyUart.print("</body>");
-        //        wiflyUart.print("</html>");
         break;
       }
     }

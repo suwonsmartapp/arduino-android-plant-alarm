@@ -27,4 +27,6 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.0.+'
     // 2.0 버전부터는 json 파서가 내장되어있지 않음.
     compile 'com.squareup.retrofit2:converter-gson:2.0.1'
+    // EventBus
+    compile 'org.greenrobot:eventbus:3.0.0'
 }

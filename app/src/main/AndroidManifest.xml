@@ -17,7 +17,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".TemperatureActivity"></activity>
+        <activity android:name=".TemperatureActivity" />
+
+        <service
+            android:name=".services.ArduinoAlarmService"
+            android:exported="false"></service>
     </application>
 
 </manifest>

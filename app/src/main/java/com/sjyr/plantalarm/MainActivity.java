@@ -1,18 +1,16 @@
 package com.sjyr.plantalarm;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.sjyr.plantalarm.interfaces.ArduinoService;
-import com.sjyr.plantalarm.models.SensorResult;
+import com.sjyr.plantalarm.events.ArduinoSensorEvent;
+import com.sjyr.plantalarm.services.ArduinoAlarmService;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -21,41 +19,45 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // 최초에 호출
         setContentView(R.layout.activity_main);
 
+        // 수분 값 Layout을 코드로 연결
         mResult = (TextView) findViewById(R.id.result_textview);
 
-        // 수분값 얻어오기
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(ArduinoService.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
 
-        final ArduinoService arduinoService = retrofit.create(ArduinoService.class);
-
-        arduinoService.getSensorResult().enqueue(new Callback<SensorResult>() {
-            @Override
-            public void onResponse(Call<SensorResult> call, Response<SensorResult> response) {
-                // 응답
-                if (response.isSuccessful()) {
-                    // 성공
-                    SensorResult body = response.body();
-                    Log.d("MainActivity", "onResponse: " + body.getMoisture());
-                    mResult.setText("" + body.getMoisture());
-                } else {
-                    // 실패
-                    Log.d("MainActivity", "onResponse: 실패");
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<SensorResult> call, Throwable t) {
-                // 404 서버 죽었을 때 실패
-                Log.d("MainActivity", "onFailure: 404 서버 다운" + t.getLocalizedMessage());
-
-            }
-        });
         // 뿌려주기
+
+        // 서비스 실행
+        startService(new Intent(this, ArduinoAlarmService.class));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // 화면이 보이기 직전에 호출
+
+        // 이벤트버스에 등록
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // 화면이 꺼지기 직전에 호출
+
+        // 이벤트버스에 해제
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe
+    public void onArduinoSensorEvent(ArduinoSensorEvent event) {
+        // 이벤트를 받을 곳
+
+        Log.d("ArduinoAlarmService", "getMoisture: " + event.moisture);
+        mResult.setText("" + event.moisture);
     }
 }

@@ -31,4 +31,5 @@ dependencies {
     compile 'org.greenrobot:eventbus:3.0.0'
 
     compile 'com.squareup:android-times-square:1.6.5@aar'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha1'
 }
